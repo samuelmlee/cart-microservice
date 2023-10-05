@@ -1,12 +1,10 @@
 package platform.codingnomads.co.cartmicroservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import platform.codingnomads.co.cartmicroservice.model.Cart;
 import platform.codingnomads.co.cartmicroservice.model.CartItem;
 import platform.codingnomads.co.cartmicroservice.repository.CartRepository;
-
 
 import javax.transaction.Transactional;
 
@@ -17,7 +15,11 @@ public class CartService {
 
     private final CartRepository cartRepository;
 
+    private final UserServiceClient userServiceClient;
+
     public Cart getCartByUserId(Long userId) {
+
+        userServiceClient.fetchUserById(userId);
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) {
             cart = Cart.builder().userId(userId).build();
