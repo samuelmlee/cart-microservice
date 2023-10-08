@@ -3,6 +3,7 @@ package platform.codingnomads.co.cartmicroservice.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,8 @@ public class Cart {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cart_id")
-    private List<CartItem> items;
+    @Builder.Default
+    private List<CartItem> items = new ArrayList<>();
 
     public void addCartItem(Long itemId) {
         items.add(CartItem.builder().itemId(itemId).amount(1).build());

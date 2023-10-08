@@ -15,11 +15,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
 
-    private final UserServiceClient userServiceClient;
-
     public Cart getCartByUserId(Long userId) {
-
-        userServiceClient.fetchUserById(userId);
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) {
             cart = Cart.builder().userId(userId).build();
@@ -28,17 +24,34 @@ public class CartService {
         return cart;
     }
 
+    public Integer getTotalItemsForUser(Long userId) {
+        return cartRepository.getTotalItemsForUser(userId);
+    }
+
     @Transactional
     public Cart addCartItem(Long itemId, Long userId) {
-        Cart cart = cartRepository.findByUserId(userId);
+        Cart cart = getOrCreateCart(userId);
+
+        boolean isExistingItem = false;
         for (CartItem item : cart.getItems()) {
             if (item.getItemId().equals(itemId)) {
                 item.setAmount(item.getAmount() + 1);
-                return cartRepository.save(cart);
+                isExistingItem = true;
+                break;
             }
         }
-        cart.addCartItem(itemId);
+        if (!isExistingItem) {
+            cart.addCartItem(itemId);
+        }
         return cartRepository.save(cart);
+    }
+
+    private Cart getOrCreateCart(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null) {
+            cart = Cart.builder().userId(userId).build();
+        }
+        return cart;
     }
 
     @Transactional

@@ -23,6 +23,15 @@ public class CartController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @RequestMapping(value = "/{userId}/items-count", method = RequestMethod.GET)
+    public ResponseEntity<?> getTotalItemsForUser(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(cartService.getTotalItemsForUser(userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/{userId}")
     public ResponseEntity<?> addNewCartItem(@RequestParam("item-id") Long itemId, @PathVariable Long userId) {

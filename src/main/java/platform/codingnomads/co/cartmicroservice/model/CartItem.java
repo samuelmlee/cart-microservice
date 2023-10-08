@@ -1,11 +1,9 @@
 package platform.codingnomads.co.cartmicroservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -24,4 +22,9 @@ public class CartItem {
 
     @Column(nullable = false)
     private Integer amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    @JsonIgnore
+    private Cart cart;
 }
