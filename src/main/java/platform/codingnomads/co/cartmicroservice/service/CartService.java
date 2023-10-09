@@ -66,7 +66,7 @@ public class CartService {
     public Cart changeItemAmountOrRemove(Long userId, Long cartItemId, Integer amount) {
         Cart cart = cartRepository.findByUserId(userId);
 
-        CartItem itemFound = cart.getItems().stream().filter(i -> i.getId().compareTo(cartItemId) == 0)
+        CartItem itemFound = cart.getItems().stream().filter(i -> i.getItemId().equals(cartItemId))
                 .findFirst().orElse(null);
 
         if (itemFound == null) {
