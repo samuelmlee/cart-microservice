@@ -6,6 +6,7 @@ import platform.codingnomads.co.cartmicroservice.model.Cart;
 import platform.codingnomads.co.cartmicroservice.model.CartItem;
 import platform.codingnomads.co.cartmicroservice.repository.CartRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Service
@@ -62,10 +63,22 @@ public class CartService {
     }
 
     @Transactional
-    public Cart updateAmount(Long userId, Long cartItemId, Integer amount) {
+    public Cart changeItemAmountOrRemove(Long userId, Long cartItemId, Integer amount) {
         Cart cart = cartRepository.findByUserId(userId);
-        cart.getItems().stream().filter(i -> i.getId().compareTo(cartItemId) == 0)
-                .findFirst().ifPresent(cartItem -> cartItem.setAmount(amount));
+
+        CartItem itemFound = cart.getItems().stream().filter(i -> i.getId().compareTo(cartItemId) == 0)
+                .findFirst().orElse(null);
+
+        if (itemFound == null) {
+            throw new EntityNotFoundException(String.format("No Cart Item found for cart of userId : %d , itemId : %d ", userId, cartItemId));
+        }
+        int updatedAmount = itemFound.getAmount() + amount;
+
+        if (updatedAmount > 0) {
+            itemFound.setAmount(updatedAmount);
+        } else {
+            cart.removeCartItem(cartItemId);
+        }
         return cart;
     }
 }

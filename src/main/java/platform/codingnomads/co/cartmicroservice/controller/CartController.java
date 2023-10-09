@@ -23,7 +23,7 @@ public class CartController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
     @RequestMapping(value = "/{userId}/items-count", method = RequestMethod.GET)
     public ResponseEntity<?> getTotalItemsForUser(@PathVariable Long userId) {
         try {
@@ -53,11 +53,11 @@ public class CartController {
     }
 
     @PatchMapping("/{userId}/{cartItemId}")
-    public ResponseEntity<?> updateItemAmount(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> changeItemAmount(@PathVariable("userId") Long userId,
                                               @PathVariable("cartItemId") Long cartItemId,
-                                              @RequestParam("amount") Integer amount) {
+                                              @RequestParam("amount-change") Integer amountChange) {
         try {
-            return ResponseEntity.ok(cartService.updateAmount(userId, cartItemId, amount));
+            return ResponseEntity.ok(cartService.changeItemAmountOrRemove(userId, cartItemId, amountChange));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
